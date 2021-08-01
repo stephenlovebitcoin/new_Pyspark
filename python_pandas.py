@@ -13,8 +13,9 @@ print(df)
 
 
 df2 =df.dropna(how='any')
-
+df3 = df.fillna('111')
 
 print(df2)
+print(df3)
 
 # df.dropna(axis='columns')
