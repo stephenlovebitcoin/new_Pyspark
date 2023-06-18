@@ -1,0 +1,41 @@
+
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
+
+spark = SparkSession.builder.getOrCreate()
+
+data = [("a testing",), ("b testing",), ("c testing",), ("d testing",)]
+columns = ["column"]
+df_patch = spark.createDataFrame(data, columns)
+df_patch.show()
+
+
+def process_patch(df_patch):
+    mapping = {
+        "a": "Network Device",
+        "b": "EMC testing",
+        "c": "c testing",
+        "d": "d testing",
+    }
+
+    def apply_mapping(column, mapping_dict,default):
+        return F.coalesce(*[F.when(column.rlike(key),value) for key,value in mapping_dict.items()],default)
+
+    df_patch = df_patch.withColumn("column",apply_mapping(F.col('column'),mapping,F.col('column')))
+
+def process_patch(df_patch):
+    mapping = {
+        "a": "a testing",
+        "b": "b testing",
+        "c": "c testing",
+        "d": "d testing",
+    }
+
+    def apply_mapping(column, mapping_dict, default):
+        return F.coalesce(*[F.when(column.rlike(key), value) for key, value in mapping_dict.items()], default)
+
+    df_patch = df_patch.withColumn("column", apply_mapping(F.col("column"), mapping, F.col("column")))
+    return df_patch
+
+processed_df = process_patch(df_patch)
+processed_df.show()
